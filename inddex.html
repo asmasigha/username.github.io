@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CuteGram Pro 🎀</title>
+    <style>
+        /* إعدادات الألوان الافتراضية (وردي بارد يسخّف) */
+        :root {
+            --bg-color: #ffeef2;
+            --main-pink: #ffb7c5;
+            --accent-pink: #ff8fa3;
+            --text-color: #6c4b51;
+            --card-bg: #ffffff;
+            --input-bg: #fff5f7;
+        }
+
+        /* الستايل الأزرق الكيوت */
+        .blue-theme {
+            --bg-color: #e3f2fd;
+            --main-pink: #90caf9;
+            --accent-pink: #42a5f5;
+            --text-color: #1a237e;
+            --card-bg: #ffffff;
+            --input-bg: #eef7fe;
+        }
+
+        /* الستايل البني الدافئ */
+        .brown-theme {
+            --bg-color: #f5f2eb;
+            --main-pink: #d7ccc8;
+            --accent-pink: #8d6e63;
+            --text-color: #4e342e;
+            --card-bg: #ffffff;
+            --input-bg: #faf8f5;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* إطار الهاتف الذكي */
+        .phone-container {
+            width: 100%;
+            max-width: 410px;
+            height: 92vh;
+            background: var(--card-bg);
+            border-radius: 40px;
+            border: 8px solid var(--main-pink);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* 1. صفحة تسجيل الدخول تشبه إنستغرام تماماً */
+        .login-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            padding: 30px;
+            background-color: var(--bg-color);
+            z-index: 10;
+        }
+
+        .login-card {
+            background: white;
+            border: 3px solid var(--main-pink);
+            border-radius: 28px;
+            padding: 30px 20px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        .login-card h1 {
+            font-size: 32px;
+            margin-bottom: 25px;
+            font-family: 'Georgia', serif;
+            color: var(--accent-pink);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .input-box {
+            width: 100%;
+            padding: 13px;
+            margin-bottom: 12px;
+            border: 2px solid var(--main-pink);
+            border-radius: 15px;
+            background: var(--input-bg);
+            outline: none;
+            text-align: center;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .input-box:focus {
+            border-color: var(--accent-pink);
+            background: white;
+        }
+
+        .cute-btn {
+            background: var(--accent-pink);
+            color: white;
+            border: none;
+            padding: 13px;
+            width: 100%;
+            border-radius: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 5px 12px rgba(255, 143, 163, 0.3);
+        }
+
+        .cute-btn:hover { transform: scale(1.02); }
+
+        /* الهيدر العلوي */
+        .app-header {
+            display: none;
+            padding: 12px 15px;
+            border-bottom: 1px solid var(--main-pink);
+            background: white;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .app-header h2 {
+            font-family: 'Georgia', serif;
+            color: var(--accent-pink);
+            font-size: 24px;
+        }
+
+        .theme-buttons button {
+            background: none;
+            border: none;
+            font-size: 22px;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+
+        /* محتوى التطبيق */
+        .app-content {
+            display: none;
+            flex: 1;
+            overflow-y: auto;
+            padding-bottom: 65px;
+            background: var(--bg-color);
+        }
+
+        /* شريط التنقل السفلي */
+        .bottom-nav {
+            display: none;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 65px;
+            background: white;
+            border-top: 1px solid var(--main-pink);
+            justify-content: space-around;
+            align-items: center;
+            z-index: 5;
+        }
+
+        .nav-item {
+            font-size: 26px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .nav-item:hover { transform: scale(1.2); }
+
+        /* شريط الستوريات (Stories) في الأعلى */
+        .stories-container {
+            display: flex;
+            padding: 10px;
+            background: white;
+            border-bottom: 1px solid var(--main-pink);
+            overflow-x: auto;
+            gap: 12px;
+        }
+
+        .story-circle {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            border: 3px solid var(--accent-pink);
+            padding: 2px;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        /* منشورات الإنستغرام */
+        .feed-page { padding: 10px; }
+
+        .instagram-post {
+            background: white;
+            border: 2px solid var(--main-pink);
+            border-radius: 24px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            padding: 12px;
+        }
+
+        .post-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--main-pink);
+            margin-right: 10px;
+            border: 2px solid var(--accent-pink);
+        }
+
+        .post-image-area {
+            width: 100%;
+            height: 280px;
+            background: var(--input-bg);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 50px;
+        }
+
+        .post-actions {
+            padding: 12px;
+            font-size: 22px;
+            display: flex;
+            gap: 15px;
+        }
+
+        .post-caption {
+            padding: 0 12px 12px 12px;
+            font-size: 14px;
+            text-align: right;
+        }
+
+        /* مشغل الموسيقى الكيوت 🎵 */
+        .music-player {
+            background: white;
+            border: 2px solid var(--main-pink);
+            border-radius: 20px;
+            margin: 10px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .music-player select {
+            width: 100%;
+            padding: 8px;
+            border-radius: 10px;
+            border: 2px solid var(--main-pink);
+            margin-bottom: 8px;
+            outline: none;
+            color: var(--text-color);
+        }
+
+        /* صفحة الشات */
+        .chat-page {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            padding: 12px;
+        }
+
+        .chat-box {
+            flex: 1;
+            background: white;
+            border: 2px solid var(--main-pink);
+            border-radius: 24px;
+            padding: 12px;
+            overflow-y: auto;
+            height: 400px;
+        }
+
+        .message {
+            margin-bottom: 8px;
+            padding: 10px 14px;
+            border-radius: 18px;
+            max-width: 75%;
+            font-size: 14px;
+        }
+
+        .msg-received { background: var(--bg-color); align-self: flex-start; margin-right: auto; }
+        .msg-sent { background: var(--main-pink); color: white; align-self: flex-end; margin-left: auto; }
+
+        /* صفحة الـ Reels */
+        .reels-page {
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .reel-video-box {
+            width: 100%;
+            height: 450px;
+            background: black;
+            border-radius: 24px;
+            border: 3px solid var(--accent-pink);
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 24px;
+        }
+
+        /* بطاقة الـ ID الفخمة في البروفايل */
+        .profile-page { padding: 15px; display: flex; flex-direction: column; align-items: center; }
+
+        .id-card {
+            background: #fff5f7;
+            border: 3px solid var(--accent-pink);
+            border-radius: 20px;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.04);
+        }
+
+        .id-avatar-box {
+            width: 90px;
+            height: 110px;
+            border: 2px dashed var(--accent-pink);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .id-avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+        .id-info { flex: 1; padding-left: 15px; text-align: left; }
+        .id-line { font-size: 13px; margin-bottom: 6px; border-bottom: 1px dashed var(--main-pink); padding-bottom: 2px; }
+    </style>
+</head>
+<body>
+
+    <div class="phone-container">
+        
+        <!-- 1. واجهة تسجيل الدخول كيووت -->
+        <div class="login-page" id="loginPage">
+            <div class="login-card">
+                <h1>CuteGram 🎀</h1>
+                <input type="email" id="email" class="input-box" placeholder="بريدكِ الإلكتروني 🌸">
+                <input type="number" id="age" class="input-box" placeholder="عمركِ السكّر 👑">
+                <input type="text" id="username" class="input-box" placeholder="اسم الحساب (Username)">
+                <input type="password" id="password" class="input-box" placeholder="الاسم الثاني (كلمة السر)">
+                <button class="cute-btn" onclick="handleLogin()">لضّي للدخول والجمال ✨</button>
+            </div>
+        </div>
+
+        <!-- الهيدر العلوي للأبليكاسيون -->
+        <div class="app-header" id="appHeader">
+            <h2>CuteGram 🎀</h2>
+            <div class="theme-buttons">
+                <button onclick="setTheme('pink')">🌸</button>
+                <button onclick="setTheme('blue')">🦋</button>
+                <button onclick="setTheme('brown')">🤎</button>
+            </div>
+        </div>
+
+        <!-- 2. مساحات المحتوى المتبدل -->
+        <div class="app-content" id="appContent">
+            
+            <!-- صفحة الـ Home الرئيسية -->
+            <div id="homeSection" class="feed-page">
+                <!-- شريط الستوريات الكيوت -->
+                <div class="stories-container">
+                    <div class="story-circle">👑</div>
+                    <div class="story-circle">🍓</div>
+                    <div class="story-circle">🧸</div>
+                    <div class="story-circle">🐱</div>
+                </div>
+
+                <!-- مشغل الموسيقى واختيار الأغاني 🎵 -->
+                <div class="music-player">
+                    <p style="font-size: 13px; margin-bottom: 5px; font-weight: bold;">🎵 مشغل الموسيقى الكيوت:</p>
+                    <select id="bgMusicSelect" onchange="changeMusic()">
+                        <option value="">-- اختاري أغنيتكِ المفضلة 🎀 --</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">Tell Ur Girlfriend Style Track ☁️</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">Did It First Vibe Beat ✨</option>
+                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">Princess Melody 🌸</option>
+                    </select>
+                    <audio id="cuteAudio" controls style="width: 100%; height: 30px; margin-top: 5px;"></audio>
+                </div>
+
+                <!-- بوست إنستغرام 1 -->
+                <div class="instagram-post">
+                    <div class="post-header">
+                        <div class="post-user-avatar"></div>
+                        <strong id="postUser1">Asma</strong>
+                    </div>
+                    <div class="post-image-area">🎀👑</div>
+                    <div class="post-actions"><span style="cursor:pointer;" onclick="this.innerText = this.innerText === '❤️' ? '🤍' : '❤️'">❤️</span> 💬 📂</div>
+                    <div class="post-caption"><strong>الأفكار المحفوظة:</strong> غرفتي الجديدة في عين مليلة راح تكون وردية وأنيقة للأميرات فقط! 💕</div>
+                </div>
+            </div>
+
+            <!-- صفحة الـ Reels (الفيديوهات) -->
+            <div id="reelsSection" class="reels-page" style="display:none;">
+                <div class="reel-video-box">
+                    <span>🎬 فيديو ريلز كيوت 🌸</span>
+                    <div style="position:absolute; bottom:15px; right:15px; font-size:20px;">❤️ 💬 📂</div>
+                </div>
+            </div>
+
+            <!-- صفحة الشات والمراسلة -->
+            <div id="chatSection" class="chat-page" style="display:none;">
+                <div class="chat-box" id="chatBox">
+                    <div class="message msg-received"><strong>إسراء ✨:</strong> أهلاً يا روحي! الشات والموقع هذا يسخّف بزاااف 😍🎀</div>
+                </div>
+                <div class="chat-footer" style="display:flex; gap:5px; margin-top:5px;">
+                    <input type="text" id="msgInput" placeholder="اكتبي ميساج كيووت لصحاباتك...">
+                    <button class="cute-btn" style="width:70px; padding:0;" onclick="sendMsg()">إرسال</button>
+                </div>
+            </div>
+
+            <!-- صفحة البروفايل مع بطاقة الـ ID -->
+            <div id="profileSection" class="profile-page" style="display:none;">
+                <div class="id-card">
+                    <div class="id-avatar-box" onclick="document.getElementById('imgUpload').click()">
+                        <span id="plusSign">➕</span>
+                        <img id="profileImg" src="" style="display:none;">
+                        <input type="file" id="imgUpload" style="display:none;" onchange="uploadPhoto(event)">
+                    </div>
+                    <div class="id-info">
+                        <div style="font-weight:bold; color:var(--accent-pink); font-size:11px; margin-bottom:5px;">PRINCESS ID CARD</div>
+                        <div class="id-line" id="idUser">Name: </div>
+                        <div class="id-line" id="idAge">Age: </div>
+                        <div class="id-line">Bio: طفلة طموحة، ذكية وتدرس هندسة كهربائية ⚡️💕</div>
+                    </div>
+                </div>
+                <p style="font-size:13px; color:gray; text-align:center; margin-top:10px;">اضغطي ➕ لرفع صورتكِ الشخصية للبطاقة!</p>
+            </div>
+
+        </div>
+
+        <!-- شريط التنقل السفلي للإنستغرام تماماً -->
+        <div class="bottom-nav" id="bottomNav">
+            <div class="nav-item" onclick="showPage('home')">🏠</div>
+            <div class="nav-item" onclick="showPage('reels')">🎬</div>
+            <div class="nav-item" onclick="showPage('chat')">💬</div>
+            <div class="nav-item" onclick="showPage('profile')">👤</div>
+        </div>
+
+    </div>
+
+    <script>
+        // دالة تسجيل الدخول
+        function handleLogin() {
+            const user = document.getElementById('username').value;
+            const ageVal = document.getElementById('age').value;
+
+            if(user && ageVal) {
+                document.getElementById('idUser').innerText = "Name: " + user;
+                document.getElementById('idAge').innerText = "Age: " + ageVal;
+                document.getElementById('postUser1').innerText = user;
+
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('appHeader').style.display = 'flex';
+                document.getElementById('appContent').style.display = 'block';
+                document.getElementById('bottomNav').style.display = 'flex';
+            } else {
+                alert("امليء كل الفراغات يا حلوة لتفتحي عالمكِ الوردي! 🥰🌸");
+            }
+        }
+
+        // دالة التنقل بين الصفحات المتقدمة
+        function showPage(page) {
+            document.getElementById('homeSection').style.display = page === 'home' ? 'block' : 'none';
+            document.getElementById('reelsSection').style.display = page === 'reels' ? 'flex' : 'none';
+            document.getElementById('chatSection').style.display = page === 'chat' ? 'flex' : 'none';
+            document.getElementById('profileSection').style.display = page === 'profile' ? 'flex' : 'none';
+        }
+
+        // دالة تغيير الموسيقى
+        function changeMusic() {
+            const select = document.getElementById('bgMusicSelect');
+            const audio = document.getElementById('cuteAudio');
+            if(select.value !== "") {
+                audio.src = select.value;
+                audio.play();
+            } else {
+                audio.pause();
+            }
+        }
+
+        // دالة تبديل الثيمات السحرية
+        function setTheme(theme) {
+            document.body.className = '';
+            if(theme === 'blue') document.body.classList.add('blue-theme');
+            if(theme === 'brown') document.body.classList.add('brown-theme');
+        }
+
+        // دالة رفع الصورة الشخصية للـ ID
+        function uploadPhoto(event) {
+            const img = document.getElementById('profileImg');
+            img.src = URL.createObjectURL(event.target.files[0]);
+            img.style.display = 'block';
+            document.getElementById('plusSign').style.display = 'none';
+        }
+
+        // دالة إرسال الرسائل الكيوت
+        function sendMsg() {
+            const input = document.getElementById('msgInput');
+            const text = input.value;
+            if(text.trim() !== "") {
+                const msgDiv = document.createElement('div');
+                msgDiv.className = "message msg-sent";
+                msgDiv.innerHTML = `<strong>أنا:</strong> ${text}`;
+                document.getElementById('chatBox').appendChild(msgDiv);
+                input.value = "";
+                const box = document.getElementById('chatBox');
+                box.scrollTop = box.scrollHeight;
+            }
+        }
+    </script>
+</body>
+</html>
