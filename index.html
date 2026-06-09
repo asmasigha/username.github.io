@@ -1,550 +1,527 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CuteGram Pro 🎀</title>
+    <title>BobonGram 🌸💎</title>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    
     <style>
-        /* إعدادات الألوان الافتراضية (وردي بارد يسخّف) */
         :root {
-            --bg-color: #ffeef2;
-            --main-pink: #ffb7c5;
-            --accent-pink: #ff8fa3;
-            --text-color: #6c4b51;
-            --card-bg: #ffffff;
-            --input-bg: #fff5f7;
-        }
-
-        /* الستايل الأزرق الكيوت */
-        .blue-theme {
-            --bg-color: #e3f2fd;
-            --main-pink: #90caf9;
-            --accent-pink: #42a5f5;
-            --text-color: #1a237e;
-            --card-bg: #ffffff;
-            --input-bg: #eef7fe;
-        }
-
-        /* الستايل البني الدافئ */
-        .brown-theme {
-            --bg-color: #f5f2eb;
-            --main-pink: #d7ccc8;
-            --accent-pink: #8d6e63;
-            --text-color: #4e342e;
-            --card-bg: #ffffff;
-            --input-bg: #faf8f5;
+            --pink-soft: #ffe4e1;
+            --pink-accent: #ffb6c1;
+            --pink-dark: #ff69b4;
+            --gray-cold: #f5f5f7;
+            --blue-gray: #e2e8f0;
+            --dark-text: #2d3748;
         }
 
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background-color: var(--pink-soft);
+            color: var(--dark-text);
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 450px;
+            height: 92vh;
+            background: white;
+            border-radius: 30px;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: 4px solid var(--pink-accent);
+        }
+
+        /* صفحات التسجيل */
+        .auth-screen {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
             transition: all 0.3s ease;
         }
 
-        /* إطار الهاتف الذكي */
-        .phone-container {
-            width: 100%;
-            max-width: 410px;
-            height: 92vh;
-            background: var(--card-bg);
-            border-radius: 40px;
-            border: 8px solid var(--main-pink);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-        }
+        .auth-screen.hidden { display: none; }
 
-        /* 1. صفحة تسجيل الدخول تشبه إنستغرام تماماً */
-        .login-page {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            padding: 30px;
-            background-color: var(--bg-color);
-            z-index: 10;
-        }
-
-        .login-card {
-            background: white;
-            border: 3px solid var(--main-pink);
-            border-radius: 28px;
-            padding: 30px 20px;
-            width: 100%;
+        .logo-area {
             text-align: center;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            margin-bottom: 40px;
         }
 
-        .login-card h1 {
-            font-size: 32px;
-            margin-bottom: 25px;
-            font-family: 'Georgia', serif;
-            color: var(--accent-pink);
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.05);
+        .logo-area h1 {
+            font-size: 2.5rem;
+            color: var(--pink-dark);
+            text-shadow: 2px 2px #ffe4e1;
         }
 
-        .input-box {
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group input {
             width: 100%;
-            padding: 13px;
-            margin-bottom: 12px;
-            border: 2px solid var(--main-pink);
+            padding: 15px;
+            border: 2px solid var(--blue-gray);
             border-radius: 15px;
-            background: var(--input-bg);
             outline: none;
-            text-align: center;
-            font-size: 14px;
+            font-size: 1rem;
             transition: 0.2s;
         }
 
-        .input-box:focus {
-            border-color: var(--accent-pink);
-            background: white;
+        .input-group input:focus {
+            border-color: var(--pink-dark);
+            background: #fff0f5;
         }
 
-        .cute-btn {
-            background: var(--accent-pink);
+        .btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--pink-dark);
             color: white;
             border: none;
-            padding: 13px;
-            width: 100%;
             border-radius: 15px;
-            font-size: 16px;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
-            transition: transform 0.2s;
-            box-shadow: 0 5px 12px rgba(255, 143, 163, 0.3);
+            transition: 0.2s;
+            margin-bottom: 15px;
         }
 
-        .cute-btn:hover { transform: scale(1.02); }
+        .btn:hover { opacity: 0.9; transform: scale(0.98); }
 
-        /* الهيدر العلوي */
+        .switch-auth {
+            text-align: center;
+            color: #718096;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* الشاشة الرئيسية والتطبيق */
         .app-header {
-            display: none;
-            padding: 12px 15px;
-            border-bottom: 1px solid var(--main-pink);
-            background: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--blue-gray);
+            display: flex;
             justify-content: space-between;
             align-items: center;
+            background: #fff;
         }
 
-        .app-header h2 {
-            font-family: 'Georgia', serif;
-            color: var(--accent-pink);
-            font-size: 24px;
-        }
+        .app-header h2 { color: var(--pink-dark); }
 
-        .theme-buttons button {
-            background: none;
-            border: none;
-            font-size: 22px;
-            cursor: pointer;
-            margin-left: 5px;
-        }
-
-        /* محتوى التطبيق */
-        .app-content {
-            display: none;
-            flex: 1;
-            overflow-y: auto;
-            padding-bottom: 65px;
-            background: var(--bg-color);
-        }
-
-        /* شريط التنقل السفلي */
-        .bottom-nav {
-            display: none;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 65px;
-            background: white;
-            border-top: 1px solid var(--main-pink);
-            justify-content: space-around;
-            align-items: center;
-            z-index: 5;
-        }
-
-        .nav-item {
-            font-size: 26px;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .nav-item:hover { transform: scale(1.2); }
-
-        /* شريط الستوريات (Stories) في الأعلى */
-        .stories-container {
+        .notes-container {
             display: flex;
-            padding: 10px;
-            background: white;
-            border-bottom: 1px solid var(--main-pink);
+            gap: 15px;
+            padding: 15px;
             overflow-x: auto;
-            gap: 12px;
+            border-bottom: 1px solid var(--blue-gray);
+            background: var(--gray-cold);
         }
 
-        .story-circle {
-            width: 56px;
-            height: 56px;
+        .note-bubble {
+            flex-shrink: 0;
+            width: 75px;
+            text-align: center;
+            position: relative;
+        }
+
+        .note-avatar {
+            width: 60px;
+            height: 60px;
             border-radius: 50%;
-            border: 3px solid var(--accent-pink);
-            padding: 2px;
-            background: white;
+            background: var(--pink-accent);
+            border: 2px solid var(--pink-dark);
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 24px;
+            font-weight: bold;
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 5px;
             cursor: pointer;
         }
 
-        /* منشورات الإنستغرام */
-        .feed-page { padding: 10px; }
-
-        .instagram-post {
+        .note-text-pop {
+            position: absolute;
+            top: -10px;
             background: white;
-            border: 2px solid var(--main-pink);
-            border-radius: 24px;
-            margin-bottom: 15px;
+            border: 1px solid var(--pink-accent);
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            max-width: 80px;
+            white-space: nowrap;
             overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            text-overflow: ellipsis;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .feed {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #fafafa;
+        }
+
+        .post-card {
+            background: white;
+            border: 1px solid var(--blue-gray);
+            border-radius: 20px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.02);
         }
 
         .post-header {
             display: flex;
             align-items: center;
-            padding: 12px;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-weight: bold;
         }
 
-        .post-user-avatar {
-            width: 36px;
-            height: 36px;
+        .post-user-ico {
+            width: 35px;
+            height: 35px;
             border-radius: 50%;
-            background: var(--main-pink);
-            margin-right: 10px;
-            border: 2px solid var(--accent-pink);
-        }
-
-        .post-image-area {
-            width: 100%;
-            height: 280px;
-            background: var(--input-bg);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 50px;
-        }
-
-        .post-actions {
-            padding: 12px;
-            font-size: 22px;
-            display: flex;
-            gap: 15px;
-        }
-
-        .post-caption {
-            padding: 0 12px 12px 12px;
-            font-size: 14px;
-            text-align: right;
-        }
-
-        /* مشغل الموسيقى الكيوت 🎵 */
-        .music-player {
-            background: white;
-            border: 2px solid var(--main-pink);
-            border-radius: 20px;
-            margin: 10px;
-            padding: 12px;
-            text-align: center;
-        }
-
-        .music-player select {
-            width: 100%;
-            padding: 8px;
-            border-radius: 10px;
-            border: 2px solid var(--main-pink);
-            margin-bottom: 8px;
-            outline: none;
-            color: var(--text-color);
-        }
-
-        /* صفحة الشات */
-        .chat-page {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            padding: 12px;
-        }
-
-        .chat-box {
-            flex: 1;
-            background: white;
-            border: 2px solid var(--main-pink);
-            border-radius: 24px;
-            padding: 12px;
-            overflow-y: auto;
-            height: 400px;
-        }
-
-        .message {
-            margin-bottom: 8px;
-            padding: 10px 14px;
-            border-radius: 18px;
-            max-width: 75%;
-            font-size: 14px;
-        }
-
-        .msg-received { background: var(--bg-color); align-self: flex-start; margin-right: auto; }
-        .msg-sent { background: var(--main-pink); color: white; align-self: flex-end; margin-left: auto; }
-
-        /* صفحة الـ Reels */
-        .reels-page {
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            align-items: center;
-        }
-
-        .reel-video-box {
-            width: 100%;
-            height: 450px;
-            background: black;
-            border-radius: 24px;
-            border: 3px solid var(--accent-pink);
-            position: relative;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            background: var(--pink-dark);
             color: white;
-            font-size: 24px;
-        }
-
-        /* بطاقة الـ ID الفخمة في البروفايل */
-        .profile-page { padding: 15px; display: flex; flex-direction: column; align-items: center; }
-
-        .id-card {
-            background: #fff5f7;
-            border: 3px solid var(--accent-pink);
-            border-radius: 20px;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            width: 100%;
-            box-shadow: 0 6px 15px rgba(0,0,0,0.04);
-        }
-
-        .id-avatar-box {
-            width: 90px;
-            height: 110px;
-            border: 2px dashed var(--accent-pink);
-            border-radius: 12px;
             display: flex;
             justify-content: center;
             align-items: center;
+            font-size: 0.9rem;
+        }
+
+        .post-content {
+            font-size: 1.05rem;
+            line-height: 1.5;
+            margin-bottom: 10px;
+            color: var(--dark-text);
+        }
+
+        .post-time {
+            font-size: 0.75rem;
+            color: #a0aec0;
+        }
+
+        /* نافذة النشر السفلية */
+        .creation-bar {
+            padding: 15px;
+            border-top: 1px solid var(--blue-gray);
             background: white;
-            overflow: hidden;
+            display: flex;
+            gap: 10px;
+        }
+
+        .creation-bar input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid var(--blue-gray);
+            border-radius: 12px;
+            outline: none;
+        }
+
+        .creation-bar button {
+            padding: 0 20px;
+            background: var(--pink-dark);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
             cursor: pointer;
         }
 
-        .id-avatar-box img { width: 100%; height: 100%; object-fit: cover; }
-        .id-info { flex: 1; padding-left: 15px; text-align: left; }
-        .id-line { font-size: 13px; margin-bottom: 6px; border-bottom: 1px dashed var(--main-pink); padding-bottom: 2px; }
+        .creation-bar button:hover { opacity: 0.9; }
+
+        .action-btns-top {
+            display: flex;
+            gap: 10px;
+        }
+
+        .small-btn {
+            background: var(--pink-soft);
+            color: var(--pink-dark);
+            padding: 5px 10px;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
-    <div class="phone-container">
-        
-        <!-- 1. واجهة تسجيل الدخول كيووت -->
-        <div class="login-page" id="loginPage">
-            <div class="login-card">
-                <h1>CuteGram 🎀</h1>
-                <input type="email" id="email" class="input-box" placeholder="بريدكِ الإلكتروني 🌸">
-                <input type="number" id="age" class="input-box" placeholder="عمركِ السكّر 👑">
-                <input type="text" id="username" class="input-box" placeholder="اسم الحساب (Username)">
-                <input type="password" id="password" class="input-box" placeholder="الاسم الثاني (كلمة السر)">
-                <button class="cute-btn" onclick="handleLogin()">لضّي للدخول والجمال ✨</button>
-            </div>
+<div class="app-container">
+
+    <div id="loginScreen" class="auth-screen">
+        <div class="logo-area">
+            <h1>BobonGram 🌸</h1>
+            <p>سجلي دخولكِ لتجربة التطبيق الحقيقي</p>
         </div>
-
-        <!-- الهيدر العلوي للأبليكاسيون -->
-        <div class="app-header" id="appHeader">
-            <h2>CuteGram 🎀</h2>
-            <div class="theme-buttons">
-                <button onclick="setTheme('pink')">🌸</button>
-                <button onclick="setTheme('blue')">🦋</button>
-                <button onclick="setTheme('brown')">🤎</button>
-            </div>
+        <div class="input-group">
+            <input type="text" id="loginUsername" placeholder="اسم المستخدم (Username)">
         </div>
-
-        <!-- 2. مساحات المحتوى المتبدل -->
-        <div class="app-content" id="appContent">
-            
-            <!-- صفحة الـ Home الرئيسية -->
-            <div id="homeSection" class="feed-page">
-                <!-- شريط الستوريات الكيوت -->
-                <div class="stories-container">
-                    <div class="story-circle">👑</div>
-                    <div class="story-circle">🍓</div>
-                    <div class="story-circle">🧸</div>
-                    <div class="story-circle">🐱</div>
-                </div>
-
-                <!-- مشغل الموسيقى واختيار الأغاني 🎵 -->
-                <div class="music-player">
-                    <p style="font-size: 13px; margin-bottom: 5px; font-weight: bold;">🎵 مشغل الموسيقى الكيوت:</p>
-                    <select id="bgMusicSelect" onchange="changeMusic()">
-                        <option value="">-- اختاري أغنيتكِ المفضلة 🎀 --</option>
-                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3">Tell Ur Girlfriend Style Track ☁️</option>
-                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3">Did It First Vibe Beat ✨</option>
-                        <option value="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3">Princess Melody 🌸</option>
-                    </select>
-                    <audio id="cuteAudio" controls style="width: 100%; height: 30px; margin-top: 5px;"></audio>
-                </div>
-
-                <!-- بوست إنستغرام 1 -->
-                <div class="instagram-post">
-                    <div class="post-header">
-                        <div class="post-user-avatar"></div>
-                        <strong id="postUser1">Asma</strong>
-                    </div>
-                    <div class="post-image-area">🎀👑</div>
-                    <div class="post-actions"><span style="cursor:pointer;" onclick="this.innerText = this.innerText === '❤️' ? '🤍' : '❤️'">❤️</span> 💬 📂</div>
-                    <div class="post-caption"><strong>الأفكار المحفوظة:</strong> غرفتي الجديدة في عين مليلة راح تكون وردية وأنيقة للأميرات فقط! 💕</div>
-                </div>
-            </div>
-
-            <!-- صفحة الـ Reels (الفيديوهات) -->
-            <div id="reelsSection" class="reels-page" style="display:none;">
-                <div class="reel-video-box">
-                    <span>🎬 فيديو ريلز كيوت 🌸</span>
-                    <div style="position:absolute; bottom:15px; right:15px; font-size:20px;">❤️ 💬 📂</div>
-                </div>
-            </div>
-
-            <!-- صفحة الشات والمراسلة -->
-            <div id="chatSection" class="chat-page" style="display:none;">
-                <div class="chat-box" id="chatBox">
-                    <div class="message msg-received"><strong>إسراء ✨:</strong> أهلاً يا روحي! الشات والموقع هذا يسخّف بزاااف 😍🎀</div>
-                </div>
-                <div class="chat-footer" style="display:flex; gap:5px; margin-top:5px;">
-                    <input type="text" id="msgInput" placeholder="اكتبي ميساج كيووت لصحاباتك...">
-                    <button class="cute-btn" style="width:70px; padding:0;" onclick="sendMsg()">إرسال</button>
-                </div>
-            </div>
-
-            <!-- صفحة البروفايل مع بطاقة الـ ID -->
-            <div id="profileSection" class="profile-page" style="display:none;">
-                <div class="id-card">
-                    <div class="id-avatar-box" onclick="document.getElementById('imgUpload').click()">
-                        <span id="plusSign">➕</span>
-                        <img id="profileImg" src="" style="display:none;">
-                        <input type="file" id="imgUpload" style="display:none;" onchange="uploadPhoto(event)">
-                    </div>
-                    <div class="id-info">
-                        <div style="font-weight:bold; color:var(--accent-pink); font-size:11px; margin-bottom:5px;">PRINCESS ID CARD</div>
-                        <div class="id-line" id="idUser">Name: </div>
-                        <div class="id-line" id="idAge">Age: </div>
-                        <div class="id-line">Bio: طفلة طموحة، ذكية وتدرس هندسة كهربائية ⚡️💕</div>
-                    </div>
-                </div>
-                <p style="font-size:13px; color:gray; text-align:center; margin-top:10px;">اضغطي ➕ لرفع صورتكِ الشخصية للبطاقة!</p>
-            </div>
-
+        <div class="input-group">
+            <input type="password" id="loginPassword" placeholder="كلمة المرور">
         </div>
-
-        <!-- شريط التنقل السفلي للإنستغرام تماماً -->
-        <div class="bottom-nav" id="bottomNav">
-            <div class="nav-item" onclick="showPage('home')">🏠</div>
-            <div class="nav-item" onclick="showPage('reels')">🎬</div>
-            <div class="nav-item" onclick="showPage('chat')">💬</div>
-            <div class="nav-item" onclick="showPage('profile')">👤</div>
-        </div>
-
+        <button class="btn" onclick="login()">تسجيل الدخول</button>
+        <div class="switch-auth" onclick="toggleAuthScreens(false)">ماعندكش حساب؟ اصنعي حساب جديد درك</div>
     </div>
 
-    <script>
-        // دالة تسجيل الدخول
-        function handleLogin() {
-            const user = document.getElementById('username').value;
-            const ageVal = document.getElementById('age').value;
+    <div id="registerScreen" class="auth-screen hidden">
+        <div class="logo-area">
+            <h1>حساب جديد ✨</h1>
+            <p>انضمي لقاع البنات والزميلات ديريكت</p>
+        </div>
+        <div class="input-group">
+            <input type="text" id="regFullName" placeholder="الاسم الكامل">
+        </div>
+        <div class="input-group">
+            <input type="text" id="regUsername" placeholder="اسم مستخدم فريد (Username)">
+        </div>
+        <div class="input-group">
+            <input type="password" id="regPassword" placeholder="كلمة المرور">
+        </div>
+        <button class="btn" onclick="register()">إنشاء الحساب الحقيقي</button>
+        <div class="switch-auth" onclick="toggleAuthScreens(true)">عندك كونت؟ ارجعي لتسجيل الدخول</div>
+    </div>
 
-            if(user && ageVal) {
-                document.getElementById('idUser').innerText = "Name: " + user;
-                document.getElementById('idAge').innerText = "Age: " + ageVal;
-                document.getElementById('postUser1').innerText = user;
+    <div class="app-header">
+        <h2>BobonGram ✨</h2>
+        <div class="action-btns-top">
+            <button class="small-btn" onclick="openNotePrompt()">+ نوتة</button>
+            <button class="small-btn" style="background:#e2e8f0; color:red;" onclick="logout()">خروج</button>
+        </div>
+    </div>
 
-                document.getElementById('loginPage').style.display = 'none';
-                document.getElementById('appHeader').style.display = 'flex';
-                document.getElementById('appContent').style.display = 'block';
-                document.getElementById('bottomNav').style.display = 'flex';
+    <div class="notes-container" id="notesWrapper">
+        </div>
+
+    <div class="feed" id="feedWrapper">
+        <div style="text-align:center; color:#a0aec0; margin-top:20px;">جاري تحميل المنشورات الحية...</div>
+    </div>
+
+    <div class="creation-bar">
+        <input type="text" id="postInput" placeholder="واش راكي تخممي درك؟...">
+        <button onclick="publishPost()">نشر</button>
+    </div>
+
+</div>
+
+<script>
+    // إعدادات الفايربيس الخاصة بأسما والمربوطة بالسيرفر ديريكت
+    const firebaseConfig = {
+        apiKey: "AIzaSyBTI56em6Haaot7wzcwDiiwdjMRL5AnSZQ",
+        authDomain: "bobongram-2b0f4.firebaseapp.com",
+        projectId: "bobongram-2b0f4",
+        storageBucket: "bobongram-2b0f4.firebasestorage.app",
+        messagingSenderId: "346774527995",
+        appId: "1:346774527995:web:f31e000cf1281caa83355e",
+        measurementId: "G-0RRCZQZGW9",
+        databaseURL: "https://bobongram-2b0f4-default-rtdb.firebaseio.com"
+    };
+
+    // تهيئة الفايربيس
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    let currentUser = JSON.parse(localStorage.getItem('bobon_session')) || null;
+
+    // فحص الجلسة عند الدخول أول مرة
+    window.onload = function() {
+        if(currentUser) {
+            hideAuth();
+            listenToData();
+        }
+    }
+
+    function toggleAuthScreens(showLogin) {
+        if(showLogin) {
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('registerScreen').classList.add('hidden');
+        } else {
+            document.getElementById('loginScreen').classList.add('hidden');
+            document.getElementById('registerScreen').classList.remove('hidden');
+        }
+    }
+
+    function hideAuth() {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('registerScreen').classList.add('hidden');
+    }
+
+    // 1. عملية إنشاء حساب حقيقي وحفظه في السيرفر
+    function register() {
+        const name = document.getElementById('regFullName').value.trim();
+        const username = document.getElementById('regUsername').value.trim().toLowerCase();
+        const pass = document.getElementById('regPassword').value.trim();
+
+        if(!name || !username || !pass) {
+            alert('عمري قاع الفراغات أولاً يا شاطرة!');
+            return;
+        }
+
+        // الفحص داخل الفايربيس إذا كان اليوزر نيم مستعمل من قبل
+        db.ref('users/' + username).once('value', snapshot => {
+            if(snapshot.exists()) {
+                alert('هاد الـ Username راهو محجوز ومستعمل من قبل! خيري واحد آخر فريد ✨');
             } else {
-                alert("امليء كل الفراغات يا حلوة لتفتحي عالمكِ الوردي! 🥰🌸");
+                // حفظ البيانات
+                const userData = { fullName: name, username: username, password: pass };
+                db.ref('users/' + username).set(userData)
+                .then(() => {
+                    alert('تم إنشاء حسابكِ بنجاح! تقدري تسجلي دخولكِ درك 🌸');
+                    toggleAuthScreens(true);
+                });
             }
+        });
+    }
+
+    // 2. تسجيل الدخول الحقيقي والفحص من السيرفر قبالة البنات قاع
+    function login() {
+        const username = document.getElementById('loginUsername').value.trim().toLowerCase();
+        const pass = document.getElementById('loginPassword').value.trim();
+
+        if(!username || !pass) {
+            alert('أدخلي اسم المستخدم وكلمة المرور!');
+            return;
         }
 
-        // دالة التنقل بين الصفحات المتقدمة
-        function showPage(page) {
-            document.getElementById('homeSection').style.display = page === 'home' ? 'block' : 'none';
-            document.getElementById('reelsSection').style.display = page === 'reels' ? 'flex' : 'none';
-            document.getElementById('chatSection').style.display = page === 'chat' ? 'flex' : 'none';
-            document.getElementById('profileSection').style.display = page === 'profile' ? 'flex' : 'none';
-        }
-
-        // دالة تغيير الموسيقى
-        function changeMusic() {
-            const select = document.getElementById('bgMusicSelect');
-            const audio = document.getElementById('cuteAudio');
-            if(select.value !== "") {
-                audio.src = select.value;
-                audio.play();
+        db.ref('users/' + username).once('value', snapshot => {
+            if(snapshot.exists()) {
+                const user = snapshot.val();
+                if(user.password === pass) {
+                    currentUser = user;
+                    localStorage.setItem('bobon_session', JSON.stringify(user));
+                    hideAuth();
+                    listenToData();
+                    alert('مرحباً بيكِ في بوبون غرام الحقيقي! 💎');
+                } else {
+                    alert('كلمة المرور خاطئة! أعيدي المحاولة.');
+                }
             } else {
-                audio.pause();
+                alert('هاد الحساب غير موجود! تأكدي من الاسم أو اصنعي حساب جديد.');
             }
+        });
+    }
+
+    function logout() {
+        localStorage.removeItem('bobon_session');
+        currentUser = null;
+        location.reload();
+    }
+
+    // 3. نشر بوست حقيقي في السيرفر المشترك
+    function publishPost() {
+        const text = document.getElementById('postInput').value.trim();
+        if(!text) return;
+
+        const postData = {
+            username: currentUser.username,
+            name: currentUser.fullName,
+            content: text,
+            timestamp: Date.now()
+        };
+
+        db.ref('posts').push(postData).then(() => {
+            document.getElementById('postInput').value = '';
+        });
+    }
+
+    // 4. نشر نوتة علوية سريعة تختفي وتتحدث عند الكل
+    function openNotePrompt() {
+        const note = prompt('اكتبي نوتة قصيرة تظهر فوق بروفايلكِ (أقل من 30 حرف):');
+        if(!note || note.length > 30) {
+            if(note) alert('النوتة طويلة بزاف، ديريها قصيرة وحلوة!');
+            return;
         }
 
-        // دالة تبديل الثيمات السحرية
-        function setTheme(theme) {
-            document.body.className = '';
-            if(theme === 'blue') document.body.classList.add('blue-theme');
-            if(theme === 'brown') document.body.classList.add('brown-theme');
-        }
+        db.ref('notes/' + currentUser.username).set({
+            name: currentUser.fullName,
+            text: note,
+            timestamp: Date.now()
+        });
+    }
 
-        // دالة رفع الصورة الشخصية للـ ID
-        function uploadPhoto(event) {
-            const img = document.getElementById('profileImg');
-            img.src = URL.createObjectURL(event.target.files[0]);
-            img.style.display = 'block';
-            document.getElementById('plusSign').style.display = 'none';
-        }
+    // 5. الاستماع الحقيقي المباشر (Realtime) لقاعدة البيانات عند تغيير أي منشور أو نوتة
+    function listenToData() {
+        // جلب المنشورات
+        db.ref('posts').orderByChild('timestamp').on('value', snapshot => {
+            const feedWrapper = document.getElementById('feedWrapper');
+            feedWrapper.innerHTML = '';
+            
+            let postsArray = [];
+            snapshot.forEach(child => {
+                postsArray.unshift(child.val()); // ترتيب من الأحدث للأقدم
+            });
 
-        // دالة إرسال الرسائل الكيوت
-        function sendMsg() {
-            const input = document.getElementById('msgInput');
-            const text = input.value;
-            if(text.trim() !== "") {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = "message msg-sent";
-                msgDiv.innerHTML = `<strong>أنا:</strong> ${text}`;
-                document.getElementById('chatBox').appendChild(msgDiv);
-                input.value = "";
-                const box = document.getElementById('chatBox');
-                box.scrollTop = box.scrollHeight;
+            if(postsArray.length === 0) {
+                feedWrapper.innerHTML = '<div style="text-align:center; color:#a0aec0; margin-top:20px;">مكانش منشورات درك، كوني الأولى وانشري عفسة! ✨</div>';
+                return;
             }
-        }
-    </script>
+
+            postsArray.forEach(p => {
+                const date = new Date(p.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                const card = `
+                    <div class="post-card">
+                        <div class="post-header">
+                            <div class="post-user-ico">${p.name.substring(0,1).toUpperCase()}</div>
+                            <div>
+                                <div>${p.name}</div>
+                                <div style="font-size:0.75rem; color:#718096; font-weight:normal;">@${p.username}</div>
+                            </div>
+                        </div>
+                        <div class="post-content">${p.content}</div>
+                        <div class="post-time">${date}</div>
+                    </div>
+                `;
+                feedWrapper.innerHTML += card;
+            });
+        });
+
+        // جلب النوتات العلوية
+        db.ref('notes').on('value', snapshot => {
+            const notesWrapper = document.getElementById('notesWrapper');
+            notesWrapper.innerHTML = '';
+
+            // دائماً نضع نوتة المستخدم الحالي في البداية لتسهيل رؤيتها
+            let userHasNote = false;
+
+            snapshot.forEach(child => {
+                const n = child.val();
+                const userKey = child.key;
+
+                const bubble = `
+                    <div class="note-bubble">
+                        <div class="note-text-pop">${n.text}</div>
+                        <div class="note-avatar">${n.name.substring(0,1).toUpperCase()}</div>
+                        <div style="font-size:0.75rem; overflow:hidden; text-overflow:ellipsis;">${n.name.split(' ')[0]}</div>
+                    </div>
+                `;
+                notesWrapper.innerHTML += bubble;
+            });
+        });
+    }
+</script>
+
 </body>
 </html>
